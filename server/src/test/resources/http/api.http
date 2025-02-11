@@ -1,0 +1,12 @@
+### Copy text
+POST http://localhost:8080/copy
+Content-Type: application/json
+
+{
+  "text": "text",
+  "ttl": 1800
+}
+> {% client.global.set("id", response.body.id) %}
+
+### Paste text
+GET http://localhost:8080/paste/{{id}}
