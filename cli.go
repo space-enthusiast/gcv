@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
@@ -13,7 +12,7 @@ import (
 
 type CopyRequest struct {
 	Text       string `json:"text"`
-	TTL        int    `json:"time_to_live"`
+	TTL        int    `json:"ttl"`
 }
 
 type CopyResponse struct {
@@ -25,7 +24,7 @@ type PasteResponse struct {
 }
 
 type ErrorResponse struct {
-	ErrorMessage string `json:"error_message"`
+	ErrorMessage string `json:"message"`
 }
 
 const serverURL = "http://localhost:8080"
