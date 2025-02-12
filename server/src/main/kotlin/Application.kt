@@ -1,5 +1,6 @@
 package com.github.spaceenthusiast
 
+import com.github.spaceenthusiast.key.TinyKeyGenerator
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {
@@ -9,7 +10,7 @@ fun main(args: Array<String>) {
 fun Application.module() {
     configureSerialization()
     configureRouting(TextService(
-            textKeyGenerator = RandomKeyGenerator(),
+            textKeyGenerator = TinyKeyGenerator(),
             textRepository = InMemoryTextRepository(),
             timeProvider = LocalDateTimeProvider(),
         ))
