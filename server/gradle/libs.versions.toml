@@ -4,6 +4,7 @@ kotlin-version = "2.1.10"
 ktor-version = "3.0.3"
 logback-version = "1.4.14"
 zxing-version = "3.5.1"
+kotest-version = "5.9.1"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor-version" }
@@ -16,6 +17,8 @@ ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref 
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin-version" }
 zxing-core = { module = "com.google.zxing:core", version.ref = "zxing-version" }
 zxing-javase = { module = "com.google.zxing:javase", version.ref = "zxing-version" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest-version" }
+kotest-assertion-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest-version" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
