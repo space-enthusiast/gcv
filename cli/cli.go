@@ -11,8 +11,8 @@ import (
 )
 
 type CopyRequest struct {
-	Text       string `json:"text"`
-	TTL        int    `json:"ttl"`
+	Text string `json:"text"`
+	TTL  int    `json:"ttl"`
 }
 
 type CopyResponse struct {
@@ -33,14 +33,14 @@ func copyText(text string, ttl int) (string, error) {
 	if len(text) > 1000 || ttl > 600 {
 		return "", errors.New("invalid input: text must be <1000 chars, TTL <= 600s")
 	}
-	
+
 	data, _ := json.Marshal(CopyRequest{Text: text, TTL: ttl})
 	resp, err := http.Post(serverURL+"/copy", "application/json", bytes.NewReader(data))
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
-	
+
 	if resp.StatusCode != http.StatusOK {
 		return "", errors.New("failed to copy text")
 	}
@@ -89,16 +89,22 @@ func TestPasteText(t *testing.T) {
 }
 
 func main() {
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: gcv -c \"text\" TTL | gcv -v ID")
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: gcv -c \"text\" [TTL] | gcv -v ID")
 		return
 	}
 
 	cmd := os.Args[1]
-	if cmd == "-c" && len(os.Args) == 4 {
+	if cmd == "-c" {
+		if len(os.Args) < 3 {
+			fmt.Println("Error: text argument required")
+			return
+		}
 		text := os.Args[2]
 		ttl := 600 // default TTL
-		fmt.Sscanf(os.Args[3], "%d", &ttl)
+		if len(os.Args) == 4 {
+			fmt.Sscanf(os.Args[3], "%d", &ttl)
+		}
 		id, err := copyText(text, ttl)
 		if err != nil {
 			fmt.Println("Error:", err)
