@@ -1,0 +1,49 @@
+name: Release CLI
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Build binaries
+        run: |
+          platforms=("windows/amd64" "windows/386" "darwin/amd64" "darwin/arm64" "linux/amd64" "linux/386" "linux/arm64")
+          for platform in "${platforms[@]}"
+          do
+            platform_split=(${platform//\// })
+            GOOS=${platform_split[0]}
+            GOARCH=${platform_split[1]}
+            output_name=cli
+            if [ $GOOS = "windows" ]; then
+              output_name+='.exe'
+            fi
+            
+            echo "Building for $GOOS/$GOARCH"
+            GOOS=$GOOS GOARCH=$GOARCH go build -o "dist/cli-${GOOS}-${GOARCH}/${output_name}" ./cli.go
+            cd dist/cli-${GOOS}-${GOARCH}
+            zip ../cli-${GOOS}-${GOARCH}.zip ${output_name}
+            cd ../..
+          done
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
