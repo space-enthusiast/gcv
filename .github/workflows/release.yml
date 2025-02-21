@@ -17,8 +17,16 @@ jobs:
         with:
           go-version: '1.21'
 
+      - name: Initialize Go module
+        run: |
+          cd cli
+          go mod init gcv
+          go mod tidy
+
       - name: Build binaries
         run: |
+          cd cli
+          mkdir -p dist
           platforms=("windows/amd64" "windows/386" "darwin/amd64" "darwin/arm64" "linux/amd64" "linux/386" "linux/arm64")
           for platform in "${platforms[@]}"
           do
@@ -31,7 +39,7 @@ jobs:
             fi
             
             echo "Building for $GOOS/$GOARCH"
-            GOOS=$GOOS GOARCH=$GOARCH go build -o "dist/cli-${GOOS}-${GOARCH}/${output_name}" ./cli.go
+            GOOS=$GOOS GOARCH=$GOARCH go build -o "dist/cli-${GOOS}-${GOARCH}/${output_name}" cli.go
             cd dist/cli-${GOOS}-${GOARCH}
             zip ../cli-${GOOS}-${GOARCH}.zip ${output_name}
             cd ../..
@@ -41,8 +49,7 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            dist/*.zip
+          files: cli/dist/*.zip
           draft: false
           prerelease: false
         env:
