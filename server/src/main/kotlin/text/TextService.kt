@@ -1,11 +1,16 @@
-package com.github.spaceenthusiast
+package com.github.spaceenthusiast.text
 
+import com.github.spaceenthusiast.AppConfig
 import com.github.spaceenthusiast.key.TextKeyGenerator
+import com.github.spaceenthusiast.qr.QrGenerator
+import com.github.spaceenthusiast.time.TimeProvider
 
 class TextService(
     private val textRepository: TextRepository,
     private val textKeyGenerator: TextKeyGenerator,
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
+    private val qrGenerator: QrGenerator,
+    private val appConfig: AppConfig,
 ) {
 
     fun copy(request: CopyRequest): CopyResponse {
@@ -31,6 +36,12 @@ class TextService(
         if (text.expireAt < now)
             return PasteFailureResponse(message = "ttl has expired")
 
-        return PasteSuccessResponse(text = text.content)
+        val link = appConfig.baseServerUrl + "/paste/" + text.id
+
+        val qr = qrGenerator.generate(link)
+
+        return PasteSuccessResponse(
+            text = text.content,
+            qr = qr)
     }
 }

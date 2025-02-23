@@ -21,6 +21,7 @@ type CopyResponse struct {
 
 type PasteResponse struct {
 	Text string `json:"text"`
+	Qr   string `json:"qr"`
 }
 
 type ErrorResponse struct {
@@ -49,22 +50,22 @@ func copyText(text string, ttl int) (string, error) {
 	return result.ID, nil
 }
 
-func pasteText(id string) (string, error) {
+func pasteText(id string) (*PasteResponse, error) {
 	resp, err := http.Get(fmt.Sprintf("%s/paste/%s", serverURL, id))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
 		var errResp ErrorResponse
 		json.NewDecoder(resp.Body).Decode(&errResp)
-		return "", errors.New(errResp.ErrorMessage)
+		return nil, errors.New(errResp.ErrorMessage)
 	}
 
 	var result PasteResponse
 	json.NewDecoder(resp.Body).Decode(&result)
-	return result.Text, nil
+	return &result, nil
 }
 
 func TestCopyText(t *testing.T) {
@@ -83,7 +84,7 @@ func TestPasteText(t *testing.T) {
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
-	if text != "test" {
+	if text.Text != "test" {
 		t.Errorf("Expected 'test', got %v", text)
 	}
 }
@@ -118,7 +119,15 @@ func main() {
 			fmt.Println("Error:", err)
 			return
 		}
-		fmt.Println(text)
+		fmt.Println(text.Text)
+	} else if cmd == "-qr" && len(os.Args) == 3 {
+		id := os.Args[2]
+		text, err := pasteText(id)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		fmt.Println(text.Qr)
 	} else {
 		fmt.Println("Invalid command usage")
 	}
