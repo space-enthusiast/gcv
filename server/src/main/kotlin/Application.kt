@@ -2,6 +2,7 @@ package com.github.spaceenthusiast
 
 import com.github.spaceenthusiast.encryption.EncryptionService
 import com.github.spaceenthusiast.key.TinyKeyGenerator
+import com.github.spaceenthusiast.presentation.WebApp
 import com.github.spaceenthusiast.qr.QrGenerator
 import com.github.spaceenthusiast.text.InMemoryTextRepository
 import com.github.spaceenthusiast.text.TextService
@@ -25,6 +26,6 @@ fun Application.module() {
             appConfig = appConfig,
             encryptionService = EncryptionService(appConfig)
         ),
-        appConfig = appConfig
+        webApp = WebApp(appConfig)
     )
 }
