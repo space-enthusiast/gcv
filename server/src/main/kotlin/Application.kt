@@ -17,13 +17,14 @@ fun Application.module() {
 
     configureSerialization()
     configureRouting(
-        TextService(
+        textService = TextService(
             textKeyGenerator = TinyKeyGenerator(),
             textRepository = InMemoryTextRepository(),
             timeProvider = LocalDateTimeProvider(),
             qrGenerator = QrGenerator(),
             appConfig = appConfig,
             encryptionService = EncryptionService(appConfig)
-        )
+        ),
+        appConfig = appConfig
     )
 }
