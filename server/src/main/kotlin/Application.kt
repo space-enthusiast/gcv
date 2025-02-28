@@ -1,5 +1,6 @@
 package com.github.spaceenthusiast
 
+import com.github.spaceenthusiast.encryption.EncryptionService
 import com.github.spaceenthusiast.key.TinyKeyGenerator
 import com.github.spaceenthusiast.qr.QrGenerator
 import com.github.spaceenthusiast.text.InMemoryTextRepository
@@ -12,6 +13,8 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    val appConfig = AppConfig()
+
     configureSerialization()
     configureRouting(
         TextService(
@@ -19,7 +22,8 @@ fun Application.module() {
             textRepository = InMemoryTextRepository(),
             timeProvider = LocalDateTimeProvider(),
             qrGenerator = QrGenerator(),
-            appConfig = AppConfig()
+            appConfig = appConfig,
+            encryptionService = EncryptionService(appConfig)
         )
     )
 }
