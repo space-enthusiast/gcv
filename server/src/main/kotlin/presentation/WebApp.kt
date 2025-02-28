@@ -63,11 +63,7 @@ class WebApp(
                 }
                 br()
                 br()
-                button {
-                    attributes["hx-get"] = "/form"
-                    attributes["hx-target"] = "#response"
-                    +"copy more text"
-                }
+                copyMoreTextButton()
             }
         }
     }
@@ -90,11 +86,7 @@ class WebApp(
                 +text
             }
             br()
-            button {
-                attributes["hx-get"] = "/form"
-                attributes["hx-target"] = "#response"
-                +"copy more text"
-            }
+            copyMoreTextButton()
         }
     }
 
@@ -102,11 +94,16 @@ class WebApp(
         html.body {
             h2 { +"no text founded" }
             p { +"text can be outdated" }
-            button {
-                attributes["hx-get"] = "/form"
-                attributes["hx-target"] = "#response"
-                +"copy more text"
-            }
+            copyMoreTextButton()
+        }
+    }
+
+    private fun FlowContent.copyMoreTextButton() {
+        button {
+            attributes["hx-get"] = "/form"
+            attributes["hx-target"] = "#response"
+            attributes["hx-push-url"] = "/"
+            +"copy more text"
         }
     }
 }

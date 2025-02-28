@@ -49,8 +49,7 @@ fun Application.configureRouting(
             val id = call.parameters["id"]
                 ?: return@get call.respond(HttpStatusCode.BadRequest)
 
-            val response = textService.paste(id)
-            when (response) {
+            when (val response = textService.paste(id)) {
                 is PasteSuccessResponse -> call.respond(response)
                 is PasteFailureResponse -> call.respond(HttpStatusCode.NotFound, response)
             }
