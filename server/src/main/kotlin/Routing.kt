@@ -1,6 +1,7 @@
 package com.github.spaceenthusiast
 
 import com.github.spaceenthusiast.presentation.WebApp
+import com.github.spaceenthusiast.qr.QrGenerator
 import com.github.spaceenthusiast.text.CopyRequest
 import com.github.spaceenthusiast.text.PasteFailureResponse
 import com.github.spaceenthusiast.text.PasteSuccessResponse
@@ -68,12 +69,19 @@ fun Application.configureRouting(
 
             when (val response = textService.paste(id)) {
                 is PasteSuccessResponse -> call.respondHtml {
-                    webApp.pageId(this, response.text)
+                    webApp.pageId(this, response.text, id)
                 }
                 is PasteFailureResponse -> call.respondHtml {
                     webApp.pageIdNotFound(this)
                 }
             }
+        }
+        get("/qr/{id}.png") {
+            val id = call.parameters["id"]
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+            val response = textService.getQrImage(id)
+            call.respondBytes(response, ContentType.Image.PNG)
         }
     }
 }

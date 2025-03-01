@@ -51,4 +51,9 @@ class TextService(
             text = decryptedContent,
             qr = qr)
     }
+
+    fun getQrImage(id: String): ByteArray {
+        val link = appConfig.baseServerUrl + "/paste/" + id
+        return qrGenerator.generateImage(link)
+    }
 }

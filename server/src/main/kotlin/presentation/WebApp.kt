@@ -63,6 +63,11 @@ class WebApp(
                 }
                 br()
                 br()
+                img {
+                    src = "/qr/$textId.png"
+                }
+                br()
+                br()
                 copyMoreTextButton()
             }
         }
@@ -76,7 +81,7 @@ class WebApp(
         }
     }
 
-    fun pageId(html: HTML, text: String) {
+    fun pageId(html: HTML, text: String, textId: String) {
         html.body {
             textArea {
                 name = "text"
@@ -85,6 +90,11 @@ class WebApp(
 
                 +text
             }
+            br()
+            img {
+                src = "/qr/$textId.png"
+            }
+            br()
             br()
             copyMoreTextButton()
         }
