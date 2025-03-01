@@ -5,6 +5,7 @@ ktor-version = "3.0.3"
 logback-version = "1.4.14"
 zxing-version = "3.5.1"
 kotest-version = "5.9.1"
+amazon-s3-sdk-version = "2.30.30"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor-version" }
@@ -20,6 +21,7 @@ zxing-core = { module = "com.google.zxing:core", version.ref = "zxing-version" }
 zxing-javase = { module = "com.google.zxing:javase", version.ref = "zxing-version" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest-version" }
 kotest-assertion-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest-version" }
+amazon-s3 = { module = "software.amazon.awssdk:s3", version.ref = "amazon-s3-sdk-version" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
