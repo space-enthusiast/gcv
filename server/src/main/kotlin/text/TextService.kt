@@ -53,7 +53,7 @@ class TextService(
     }
 
     fun getQrImage(id: String): ByteArray {
-        val link = appConfig.baseServerUrl + "/paste/" + id
+        val link = appConfig.baseServerUrl + "/" + id
         return qrGenerator.generateImage(link)
     }
 }
