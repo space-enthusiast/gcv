@@ -27,6 +27,8 @@ jobs:
           go mod tidy
 
       - name: Build binaries
+        env:
+          GCV_SERVER_URL: ${{ secrets.GCV_SERVER_URL }}
         run: |
           cd cli
           mkdir -p dist
@@ -42,7 +44,7 @@ jobs:
             fi
             
             echo "Building for $GOOS/$GOARCH"
-            GOOS=$GOOS GOARCH=$GOARCH go build -o "dist/cli-${GOOS}-${GOARCH}/${output_name}" cli.go
+            GOOS=$GOOS GOARCH=$GOARCH go build -ldflags="-X main.serverURL=${GCV_SERVER_URL}" -o "dist/cli-${GOOS}-${GOARCH}/${output_name}" cli.go
             cd dist/cli-${GOOS}-${GOARCH}
             zip ../cli-${GOOS}-${GOARCH}.zip ${output_name}
             cd ../..
