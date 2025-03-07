@@ -1,0 +1,27 @@
+{
+    "version": "0.0.4",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/space-enthusiast/gcv/releases/download/v0.0.4/cli-windows-amd64.zip",
+            "bin": "cli-windows-amd64.exe"
+        },
+        "32bit": {
+            "url": "https://github.com/space-enthusiast/gcv/releases/download/v0.0.4/cli-windows-386.zip",
+            "bin": "cli-windows-386.exe"
+        }
+    },
+    "homepage": "https://github.com/space-enthusiast/gcv",
+    "license": "MIT",
+    "description": "GCV CLI Tool",
+    "hash": "skip",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/space-enthusiast/gcv/releases/download/latest/cli-windows-amd64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/space-enthusiast/gcv/releases/download/latest/cli-windows-386.zip"
+            }
+        }
+    }
+}
