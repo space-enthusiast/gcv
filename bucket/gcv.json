@@ -3,11 +3,13 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/space-enthusiast/gcv/releases/download/v0.0.4/cli-windows-amd64.zip",
-            "bin": "cli-windows-amd64.exe"
+            "bin": "cli-windows-amd64.exe",
+            "hash": "E52E0293CC9259FD045E0D174878D576E726B30DA8362C8CB6E54556F45B5D0F"
         },
         "32bit": {
             "url": "https://github.com/space-enthusiast/gcv/releases/download/v0.0.4/cli-windows-386.zip",
-            "bin": "cli-windows-386.exe"
+            "bin": "cli-windows-386.exe",
+            "hash": "ED20FA98A22C3EC6ADF33F90F38B5FD4E92CCA02947350E1988CBF906B0FCB3D"
         }
     },
     "homepage": "https://github.com/space-enthusiast/gcv",
