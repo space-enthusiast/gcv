@@ -26,6 +26,7 @@ class TextService(
             content = encryptedContent,
             ttl = request.ttl,
             expireAt = now.plusSeconds(request.ttl),
+            maxPasteCount = request.maxPasteCount,
         )
 
         textRepository.save(entity)
@@ -40,6 +41,12 @@ class TextService(
 
         if (text.expireAt < now)
             return PasteFailureResponse(message = "ttl has expired")
+
+        synchronized(text) {
+            if (text.pasteCount >= text.maxPasteCount)
+                return PasteFailureResponse(message = "paste limit reached")
+            text.pasteCount += 1
+        }
 
         val decryptedContent = encryptionService.decrypt(text.content)
 
