@@ -1,0 +1,1 @@
+- when prompt for a feature request ask the user if frontend or cli integration is also needed
