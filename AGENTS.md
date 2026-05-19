@@ -1,0 +1,4 @@
+- when prompt for a feature request ask the user if frontend or cli integration is also needed
+- Kotlin style:
+	- For invalid caller input, prefer explicit `require(...)` checks near the start of the function.
+	- Do not hide invalid input by silently normalizing or ignoring it unless lenient behavior is intentionally required.

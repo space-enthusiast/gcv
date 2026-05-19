@@ -16,6 +16,10 @@ class TextService(
 ) {
 
     fun copy(request: CopyRequest): CopyResponse {
+        require(request.pasteLimit == null || request.pasteLimit > 0) {
+            "pasteLimit must be > 0 when provided"
+        }
+
         val now = timeProvider.now()
         val id = textKeyGenerator.generate()
 
@@ -26,6 +30,7 @@ class TextService(
             content = encryptedContent,
             ttl = request.ttl,
             expireAt = now.plusSeconds(request.ttl),
+            remainingPastes = request.pasteLimit,
         )
 
         textRepository.save(entity)
@@ -40,6 +45,15 @@ class TextService(
 
         if (text.expireAt < now)
             return PasteFailureResponse(message = "ttl has expired")
+
+        if (text.remainingPastes != null) {
+            val nextRemaining = text.remainingPastes - 1
+            if (nextRemaining <= 0) {
+                textRepository.delete(text.id)
+            } else {
+                textRepository.save(text.copy(remainingPastes = nextRemaining))
+            }
+        }
 
         val decryptedContent = encryptionService.decrypt(text.content)
 

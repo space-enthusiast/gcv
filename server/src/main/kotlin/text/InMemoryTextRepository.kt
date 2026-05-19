@@ -12,4 +12,8 @@ class InMemoryTextRepository : TextRepository {
     override fun findBy(id: String): TextEntity? {
         return map[id]
     }
+
+    override fun delete(id: String) {
+        map.remove(id)
+    }
 }

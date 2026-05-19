@@ -32,9 +32,11 @@ fun Application.configureRouting(
         post("/submit") {
             val params = call.receiveParameters()
             val text = params.getOrFail("text")
+            val pasteLimit = params["pasteLimit"]?.takeIf { it.isNotBlank() }?.toInt()
             val response = textService.copy(request = CopyRequest(
                 text = text,
-                ttl = 60 * 10 // it's default value now. TODO change
+                ttl = 60 * 10, // it's default value now. TODO change
+                pasteLimit = pasteLimit,
             ))
 
             call.respondHtml {
