@@ -12,4 +12,10 @@ class InMemoryTextRepository : TextRepository {
     override fun findBy(id: String): TextEntity? {
         return map[id]
     }
+
+    override fun incrementPasteCount(id: String): TextEntity? {
+        return map.computeIfPresent(id) { _, existing ->
+            existing.copy(pasteCount = existing.pasteCount + 1)
+        }
+    }
 }

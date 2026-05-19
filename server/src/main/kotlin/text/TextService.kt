@@ -26,6 +26,11 @@ class TextService(
             content = encryptedContent,
             ttl = request.ttl,
             expireAt = now.plusSeconds(request.ttl),
+            /*
+                # FEEDBACK
+                this code is good practice but i would rather use require() in the first line of the function
+             */
+            pasteLimit = request.pasteLimit?.takeIf { it > 0 },
         )
 
         textRepository.save(entity)
@@ -40,6 +45,11 @@ class TextService(
 
         if (text.expireAt < now)
             return PasteFailureResponse(message = "ttl has expired")
+
+        if (text.pasteLimit != null && text.pasteCount >= text.pasteLimit)
+            return PasteFailureResponse(message = "paste limit reached")
+
+        textRepository.incrementPasteCount(id)
 
         val decryptedContent = encryptionService.decrypt(text.content)
 

@@ -3,7 +3,7 @@ package com.github.spaceenthusiast.text
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CopyRequest(val text: String, val ttl: Long)
+data class CopyRequest(val text: String, val ttl: Long, val pasteLimit: Long? = null)
 @Serializable
 data class CopyResponse(val id: String)
 
