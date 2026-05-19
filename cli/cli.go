@@ -11,8 +11,9 @@ import (
 )
 
 type CopyRequest struct {
-	Text string `json:"text"`
-	TTL  int    `json:"ttl"`
+	Text       string `json:"text"`
+	TTL        int    `json:"ttl"`
+	PasteLimit *int   `json:"pasteLimit,omitempty"`
 }
 
 type CopyResponse struct {
@@ -30,12 +31,15 @@ type ErrorResponse struct {
 
 const serverURL = "http://localhost:8080"
 
-func copyText(text string, ttl int) (string, error) {
+func copyText(text string, ttl int, pasteLimit *int) (string, error) {
 	if len(text) > 1000 || ttl > 600 {
 		return "", errors.New("invalid input: text must be <1000 chars, TTL <= 600s")
 	}
+	if pasteLimit != nil && *pasteLimit <= 0 {
+		return "", errors.New("invalid input: paste limit must be > 0")
+	}
 
-	data, _ := json.Marshal(CopyRequest{Text: text, TTL: ttl})
+	data, _ := json.Marshal(CopyRequest{Text: text, TTL: ttl, PasteLimit: pasteLimit})
 	resp, err := http.Post(serverURL+"/copy", "application/json", bytes.NewReader(data))
 	if err != nil {
 		return "", err
@@ -69,7 +73,7 @@ func pasteText(id string) (*PasteResponse, error) {
 }
 
 func TestCopyText(t *testing.T) {
-	id, err := copyText("test", 300)
+	id, err := copyText("test", 300, nil)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
@@ -79,7 +83,7 @@ func TestCopyText(t *testing.T) {
 }
 
 func TestPasteText(t *testing.T) {
-	id, _ := copyText("test", 300)
+	id, _ := copyText("test", 300, nil)
 	text, err := pasteText(id)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -91,7 +95,7 @@ func TestPasteText(t *testing.T) {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: gcv -c \"text\" [TTL] | gcv -v ID")
+		fmt.Println("Usage: gcv -c \"text\" [TTL] [PASTE_LIMIT] | gcv -v ID")
 		return
 	}
 
@@ -103,15 +107,28 @@ func main() {
 		}
 		text := os.Args[2]
 		ttl := 600 // default TTL
-		if len(os.Args) == 4 {
+		if len(os.Args) >= 4 {
 			fmt.Sscanf(os.Args[3], "%d", &ttl)
 		}
-		id, err := copyText(text, ttl)
+		var pasteLimit *int
+		if len(os.Args) == 5 {
+			var n int
+			if _, err := fmt.Sscanf(os.Args[4], "%d", &n); err != nil {
+				fmt.Println("Error: invalid paste limit")
+				return
+			}
+			pasteLimit = &n
+		}
+		id, err := copyText(text, ttl, pasteLimit)
 		if err != nil {
 			fmt.Println("Error:", err)
 			return
 		}
-		fmt.Printf("id: %s, ttl: %ds\n", id, ttl)
+		if pasteLimit != nil {
+			fmt.Printf("id: %s, ttl: %ds, pasteLimit: %d\n", id, ttl, *pasteLimit)
+		} else {
+			fmt.Printf("id: %s, ttl: %ds, pasteLimit: unlimited\n", id, ttl)
+		}
 	} else if cmd == "-v" && len(os.Args) == 3 {
 		id := os.Args[2]
 		text, err := pasteText(id)

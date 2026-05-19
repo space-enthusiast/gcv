@@ -48,6 +48,16 @@ class WebApp(
                     cols = "50"
                 }
                 br()
+                label {
+                    htmlFor = "pasteLimit"
+                    +"paste limit (leave blank for unlimited): "
+                }
+                numberInput {
+                    id = "pasteLimit"
+                    name = "pasteLimit"
+                    min = "1"
+                }
+                br()
                 button {
                     type = ButtonType.submit
                     +"Submit"
