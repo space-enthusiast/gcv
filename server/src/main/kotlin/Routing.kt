@@ -1,8 +1,10 @@
 package com.github.spaceenthusiast
 
 import com.github.spaceenthusiast.clipboard.ClipboardService
+import com.github.spaceenthusiast.clipboard.CopyFilesRequest
 import com.github.spaceenthusiast.clipboard.CopyTextRequest
 import com.github.spaceenthusiast.clipboard.PasteFailureResponse
+import com.github.spaceenthusiast.clipboard.PasteFilesSuccess
 import com.github.spaceenthusiast.clipboard.PasteSuccessResponse
 import com.github.spaceenthusiast.presentation.WebApp
 import io.ktor.http.*
@@ -34,7 +36,7 @@ fun Application.configureRouting(
             val pasteLimit = params["pasteLimit"]?.takeIf { it.isNotBlank() }?.toInt()
             val response = clipboardService.copyText(request = CopyTextRequest(
                 text = text,
-                ttl = 60 * 10, // it's default value now. TODO change
+                ttl = 60 * 10,
                 pasteLimit = pasteLimit,
             ))
 
@@ -47,12 +49,26 @@ fun Application.configureRouting(
             val response = clipboardService.copyText(request = request)
             call.respond(response)
         }
+        post("/copy/files") {
+            val request = call.receive<CopyFilesRequest>()
+            val response = clipboardService.copyFiles(request = request)
+            call.respond(response)
+        }
+        get("/submitted/{id}") {
+            val id = call.parameters["id"]
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+            call.respondHtml {
+                webApp.submit(this, id)
+            }
+        }
         get("/paste/{id}") {
             val id = call.parameters["id"]
                 ?: return@get call.respond(HttpStatusCode.BadRequest)
 
             when (val response = clipboardService.paste(id)) {
                 is PasteSuccessResponse -> call.respond(response)
+                is PasteFilesSuccess -> call.respond(response)
                 is PasteFailureResponse -> call.respond(HttpStatusCode.NotFound, response)
             }
         }
@@ -71,6 +87,9 @@ fun Application.configureRouting(
             when (val response = clipboardService.paste(id)) {
                 is PasteSuccessResponse -> call.respondHtml {
                     webApp.pageId(this, response.text, id)
+                }
+                is PasteFilesSuccess -> call.respondHtml {
+                    webApp.pageIdFiles(this, response.files, id)
                 }
                 is PasteFailureResponse -> call.respondHtml {
                     webApp.pageIdNotFound(this)

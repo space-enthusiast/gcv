@@ -1,6 +1,7 @@
 package com.github.spaceenthusiast.presentation
 
 import com.github.spaceenthusiast.AppConfig
+import com.github.spaceenthusiast.clipboard.PresignedDownload
 import kotlinx.html.*
 
 class WebApp(
@@ -109,6 +110,20 @@ class WebApp(
                 src = "/qr/$textId.png"
             }
             br()
+            br()
+            copyMoreTextButton()
+        }
+    }
+
+    fun pageIdFiles(html: HTML, files: List<PresignedDownload>, textId: String) {
+        html.body {
+            h2 { +"files paste #${textId}" }
+            p { +"file UI is not built yet; use the JSON API at /paste/${textId}" }
+            ul {
+                files.forEach { f ->
+                    li { +"${f.filename} (${f.sizeBytes} bytes)" }
+                }
+            }
             br()
             copyMoreTextButton()
         }

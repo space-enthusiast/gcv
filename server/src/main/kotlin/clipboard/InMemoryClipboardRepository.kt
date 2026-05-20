@@ -13,6 +13,10 @@ class InMemoryClipboardRepository : ClipboardRepository {
         return map[id]
     }
 
+    override fun findAll(): List<ClipboardEntry> {
+        return map.values.toList()
+    }
+
     override fun delete(id: String) {
         map.remove(id)
     }
