@@ -38,8 +38,12 @@ dependencies {
     testImplementation(libs.kotest.assertion.core)
     testImplementation(libs.testcontainers.core)
     testImplementation(libs.testcontainers.junit.jupiter)
+    testImplementation(libs.junit.jupiter)
 }
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    listOf("gcv.test.e2e", "gcv.test.go").forEach { key ->
+        System.getProperty(key)?.let { systemProperty(key, it) }
+    }
 }

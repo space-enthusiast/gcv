@@ -7,6 +7,7 @@ zxing-version = "3.5.1"
 kotest-version = "5.9.1"
 aws-sdk-kotlin-version = "1.6.72"
 testcontainers-version = "1.20.4"
+junit-jupiter-version = "5.10.2"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor-version" }
@@ -26,6 +27,7 @@ kotest-assertion-core = { module = "io.kotest:kotest-assertions-core", version.r
 aws-sdk-s3 = { module = "aws.sdk.kotlin:s3", version.ref = "aws-sdk-kotlin-version" }
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers-version" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers-version" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter-version" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
