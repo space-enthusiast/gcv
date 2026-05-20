@@ -1,11 +1,11 @@
 package com.github.spaceenthusiast
 
+import com.github.spaceenthusiast.clipboard.ClipboardService
+import com.github.spaceenthusiast.clipboard.InMemoryClipboardRepository
 import com.github.spaceenthusiast.encryption.EncryptionService
 import com.github.spaceenthusiast.key.TinyKeyGenerator
 import com.github.spaceenthusiast.presentation.WebApp
 import com.github.spaceenthusiast.qr.QrGenerator
-import com.github.spaceenthusiast.text.InMemoryTextRepository
-import com.github.spaceenthusiast.text.TextService
 import com.github.spaceenthusiast.time.LocalDateTimeProvider
 import io.ktor.server.application.*
 
@@ -18,9 +18,9 @@ fun Application.module() {
 
     configureSerialization()
     configureRouting(
-        textService = TextService(
+        clipboardService = ClipboardService(
             textKeyGenerator = TinyKeyGenerator(),
-            textRepository = InMemoryTextRepository(),
+            clipboardRepository = InMemoryClipboardRepository(),
             timeProvider = LocalDateTimeProvider(),
             qrGenerator = QrGenerator(),
             appConfig = appConfig,

@@ -1,4 +1,4 @@
-package com.github.spaceenthusiast.text
+package com.github.spaceenthusiast.clipboard
 
 import com.github.spaceenthusiast.AppConfig
 import com.github.spaceenthusiast.encryption.EncryptionService
@@ -6,8 +6,8 @@ import com.github.spaceenthusiast.key.TextKeyGenerator
 import com.github.spaceenthusiast.qr.QrGenerator
 import com.github.spaceenthusiast.time.TimeProvider
 
-class TextService(
-    private val textRepository: TextRepository,
+class ClipboardService(
+    private val clipboardRepository: ClipboardRepository,
     private val textKeyGenerator: TextKeyGenerator,
     private val timeProvider: TimeProvider,
     private val qrGenerator: QrGenerator,
@@ -15,7 +15,7 @@ class TextService(
     private val appConfig: AppConfig,
 ) {
 
-    fun copy(request: CopyRequest): CopyResponse {
+    fun copyText(request: CopyTextRequest): CopyTextResponse {
         require(request.pasteLimit == null || request.pasteLimit > 0) {
             "pasteLimit must be > 0 when provided"
         }
@@ -25,49 +25,51 @@ class TextService(
 
         val encryptedContent = encryptionService.encrypt(request.text)
 
-        val entity = TextEntity(
+        val entity = ClipboardEntry(
             id = id,
-            content = encryptedContent,
+            payload = Payload.Text(cipher = encryptedContent),
             ttl = request.ttl,
             expireAt = now.plusSeconds(request.ttl),
             remainingPastes = request.pasteLimit,
         )
 
-        textRepository.save(entity)
+        clipboardRepository.save(entity)
 
-        return CopyResponse(id)
+        return CopyTextResponse(id)
     }
 
     fun paste(id: String): PasteResponse {
         val now = timeProvider.now()
-        val text = textRepository.findBy(id)
+        val entry = clipboardRepository.findBy(id)
             ?: return PasteFailureResponse(message = "id not found")
 
-        if (text.expireAt < now)
+        if (entry.expireAt < now)
             return PasteFailureResponse(message = "ttl has expired")
 
-        if (text.remainingPastes != null) {
-            val nextRemaining = text.remainingPastes - 1
-            if (nextRemaining <= 0) {
-                textRepository.delete(text.id)
-            } else {
-                textRepository.save(text.copy(remainingPastes = nextRemaining))
+        consumePaste(entry)
+
+        return when (val payload = entry.payload) {
+            is Payload.Text -> {
+                val decryptedContent = encryptionService.decrypt(payload.cipher)
+                val link = appConfig.baseServerUrl + "/paste/" + entry.id
+                val qr = qrGenerator.generate(link)
+                PasteSuccessResponse(text = decryptedContent, qr = qr)
             }
         }
-
-        val decryptedContent = encryptionService.decrypt(text.content)
-
-        val link = appConfig.baseServerUrl + "/paste/" + text.id
-
-        val qr = qrGenerator.generate(link)
-
-        return PasteSuccessResponse(
-            text = decryptedContent,
-            qr = qr)
     }
 
     fun getQrImage(id: String): ByteArray {
         val link = appConfig.baseServerUrl + "/" + id
         return qrGenerator.generateImage(link)
+    }
+
+    private fun consumePaste(entry: ClipboardEntry) {
+        if (entry.remainingPastes == null) return
+        val next = entry.remainingPastes - 1
+        if (next <= 0) {
+            clipboardRepository.delete(entry.id)
+        } else {
+            clipboardRepository.save(entry.copy(remainingPastes = next))
+        }
     }
 }
