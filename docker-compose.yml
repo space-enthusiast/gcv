@@ -13,7 +13,7 @@ services:
       - "8333:8333"
       - "9333:9333"
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O - http://localhost:9333/cluster/healthz || exit 1"]
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:9333/cluster/healthz || exit 1"]
       interval: 5s
       timeout: 3s
       retries: 20
