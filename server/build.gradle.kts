@@ -32,18 +32,11 @@ dependencies {
     implementation(libs.ktor.server.config.yaml)
     implementation(libs.aws.sdk.s3)
     testImplementation(libs.ktor.server.test.host)
-    testImplementation(libs.ktor.client.cio)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertion.core)
-    testImplementation(libs.testcontainers.core)
-    testImplementation(libs.testcontainers.junit.jupiter)
-    testImplementation(libs.junit.jupiter)
 }
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
-    listOf("gcv.test.e2e", "gcv.test.go").forEach { key ->
-        System.getProperty(key)?.let { systemProperty(key, it) }
-    }
 }
