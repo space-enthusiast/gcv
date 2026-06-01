@@ -6,9 +6,17 @@
 
 ## Example
 ```
-go run -c "{given string to copy}"
-go run -v "{ID}
+go run cli.go -c "{given string to copy}"
+go run cli.go -v "{ID}"
+go run cli.go -cf path/to/a.txt path/to/b.png [--ttl=600] [--limit=1]
+go run cli.go -vf "{ID}" [out_dir]
 ```
+
+`-cf` registers a bundle of files with the server, then PUTs each file
+directly to the SeaweedFS endpoint using the presigned URL + SSE-C
+headers the server returned. `-vf` does the reverse: fetches presigned
+GET URLs from the server and downloads each file (with the SSE-C
+headers replayed) into `out_dir` (default `.`).
 
 ## How to build
 
